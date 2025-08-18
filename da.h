@@ -13,6 +13,8 @@
  *
  *   2. Use the provided macros to manipulate your dynamic array:
  *        - da_append(da, item)         // append element
+ *        - da_resize(da, item)         // change count
+ *        - da_shrink(da, item)         // shrink the capacity of the
  *        - da_insert(da, i, item)      // insert element at index
  *        - da_get(da, i)               // access element at index (with bounds check in debug mode)
  *        - da_last(da)                 // access the last element
@@ -62,18 +64,19 @@
 #define _da_capacity_grow(da) \
 	do { \
 		if ((da).capacity == 0) { \
-			(da).capacity = 8; \
+			if ((da).count == 0) (da).capacity = 8; \
+			else (da).capacity = (da).count * 2; \
 			(da).items = malloc(sizeof(*(da).items) * (da).capacity); \
 		} else { \
-			if ((da).count >= (da).capacity) (da).capacity *= 2; \
+			if ((da).count >= (da).capacity) (da).capacity = (da).count * 2; \
 			(da).items = realloc((da).items, sizeof(*(da).items) * (da).capacity); \
 		} \
 	} while(0)
 
-#define _da_capacity_shrink(da) \
+#define da_shrink(da) \
 	do { \
 		if ((da).capacity == 0) break; \
-		if ((da).count <= (da).capacity / 4) (da).capacity /= 2; \
+		if ((da).count <= (da).capacity / 4) (da).capacity = (da).count * 2; \
 		(da).items = realloc((da).items, sizeof(*(da).items) * (da).capacity); \
 	} while(0)
 
@@ -104,16 +107,21 @@
 		(da).items[(da).count - 1]; \
 	})
 
+#define da_resize(da, cnt) \
+	do { \
+		(da).count = (cnt); \
+		_da_capacity_grow(da); \
+		da_shrink(da); \
+	} while(0)
+
 #define da_unordered_remove(da, index) \
-	do{ \
-		_da_capacity_shrink(da); \
+	do { \
 		da_get(da, (index)) = da_last(da); \
 		(da).count--; \
 	} while(0)
 
 #define da_ordered_remove(da, index) \
-	do{ \
-		_da_capacity_shrink(da); \
+	do { \
 		da_get(da, (index)) = da_last(da); \
 		memcpy((da).items+(index), (da).items+(index)+1, \
 				sizeof(*(da).items)*((da).count-index)); \

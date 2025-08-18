@@ -13,8 +13,22 @@ int main(void) {
 	for (size_t i = 0; i < 10; i++) {
 		da_append(nums, i);
 	}
-
+	
 	da_unordered_remove(nums, 8);
+
+	for (size_t i = 0; i < nums.count; i++) {
+		printf("%i ", da_get(nums, i));
+	}
+
+	printf("\n");
+	da_resize(nums, 3);
+
+	printf("cap: %zu\n", nums.capacity);
+
+	for (size_t i = 0; i < 3; i++) {
+		da_append(nums, i);
+	}
+
 	da_insert(nums, 1, -1);
 
 	for (size_t i = 0; i < nums.count; i++) {

@@ -16,7 +16,6 @@
  *        - da_insert(da, i, item)      // insert element at index
  *        - da_get(da, i)               // access element at index (with bounds check in debug mode)
  *        - da_last(da)                 // access the last element
- *        - da_pop(da)                  // remove and return the last element
  *        - da_unordered_remove(da, i)  // remove element (fast, order not preserved)
  *        - da_ordered_remove(da, i)    // remove element (order preserved, slower)
  *        - da_free(da)                 // release memory
@@ -59,6 +58,7 @@
 #endif
 
 #define da(type) struct { type *items; size_t count, capacity; }
+
 #define _da_capacity_grow(da) \
 	do { \
 		if ((da).capacity == 0) { \
@@ -95,14 +95,14 @@
 	(*({ \
 	   _da_error_if(index >= (da).count || (index) < 0, "index %" PRId64 " is out of the range 0..%zu\n", \
 			   ((int64_t)(index)), (da).count); \
-			   (da).items + index; \
-			   }))
+		(da).items + index; \
+	}))
 
 #define da_last(da) \
 	({ \
-	 _da_error_if((da).count == 0, "da_last on empty dynamic array\n"); \
-	 (da).items[(da).count - 1]; \
-	 })
+		_da_error_if((da).count == 0, "da_last on empty dynamic array\n"); \
+		(da).items[(da).count - 1]; \
+	})
 
 #define da_unordered_remove(da, index) \
 	do{ \
@@ -115,7 +115,8 @@
 	do{ \
 		_da_capacity_shrink(da); \
 		da_get(da, (index)) = da_last(da); \
-		memcpy((da).items+(index), (da).items+(index)+1, sizeof(*(da).items)*((da).count-index)); \
+		memcpy((da).items+(index), (da).items+(index)+1, \
+				sizeof(*(da).items)*((da).count-index)); \
 		(da).count--; \
 	} while(0)
 
@@ -126,12 +127,5 @@
 		(da).count = 0; \
 		(da).capacity = 0; \
 	} while(0)
-
-#define da_pop(da) \
-	(*({ \
-		_da_error_if((da).count == 0, "da_pop on empty dynamic array\n"); \
-		(da).count--; \
-		(da).items + (da).count; \
-	}))
 
 #endif

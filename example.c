@@ -4,7 +4,7 @@
 typedef struct {
 	char *items;
 	size_t count;
-	size_t capacity;;
+	size_t capacity;
 } StringBuilder;
 
 int main(void) {

@@ -12,15 +12,15 @@
  *      Or use da(type) macro
  *
  *   2. Use the provided macros to manipulate your dynamic array:
- *        - da_append(da, item)         // append element
- *        - da_resize(da, item)         // change count
- *        - da_shrink(da, item)         // shrink the capacity of the
- *        - da_insert(da, i, item)      // insert element at index
- *        - da_get(da, i)               // access element at index (with bounds check in debug mode)
- *        - da_last(da)                 // access the last element
- *        - da_unordered_remove(da, i)  // remove element (fast, order not preserved)
- *        - da_ordered_remove(da, i)    // remove element (order preserved, slower)
- *        - da_free(da)                 // release memory
+ *        - da_append(&da, item)         // append element
+ *        - da_resize(&da, item)         // change count
+ *        - da_shrink(&da, item)         // shrink the capacity of the
+ *        - da_insert(&da, i, item)      // insert element at index
+ *        - da_get(&da, i)               // access element at index (with bounds check in debug mode)
+ *        - da_last(&da)                 // access the last element
+ *        - da_unordered_remove(&da, i)  // remove element (fast, order not preserved)
+ *        - da_ordered_remove(&da, i)    // remove element (order preserved, slower)
+ *        - da_free(&da)                 // release memory
  *
  *   Capacity management is handled automatically:
  *        - The array grows when full (capacity × 2).
@@ -63,53 +63,53 @@
 
 #define _da_capacity_grow(da) \
 	do { \
-		if ((da).capacity == 0) { \
-			if ((da).count == 0) (da).capacity = 8; \
-			else (da).capacity = (da).count * 2; \
-			(da).items = malloc(sizeof(*(da).items) * (da).capacity); \
+		if ((da)->capacity == 0) { \
+			if ((da)->count == 0) (da)->capacity = 8; \
+			else (da)->capacity = (da)->count * 2; \
+			(da)->items = malloc(sizeof(*(da)->items) * (da)->capacity); \
 		} else { \
-			if ((da).count >= (da).capacity) (da).capacity = (da).count * 2; \
-			(da).items = realloc((da).items, sizeof(*(da).items) * (da).capacity); \
+			if ((da)->count >= (da)->capacity) (da)->capacity = (da)->count * 2; \
+			(da)->items = realloc((da)->items, sizeof(*(da)->items) * (da)->capacity); \
 		} \
 	} while(0)
 
 #define da_shrink(da) \
 	do { \
-		if ((da).capacity == 0) break; \
-		if ((da).count <= (da).capacity / 4) (da).capacity = (da).count * 2; \
-		(da).items = realloc((da).items, sizeof(*(da).items) * (da).capacity); \
+		if ((da)->capacity == 0) break; \
+		if ((da)->count <= (da)->capacity / 4) (da)->capacity = (da)->count * 2; \
+		(da)->items = realloc((da)->items, sizeof(*(da)->items) * (da)->capacity); \
 	} while(0)
 
 #define da_append(da, item) \
 	do { \
 		_da_capacity_grow(da); \
-		(da).items[(da).count++] = (item); \
+		(da)->items[(da)->count++] = (item); \
 	} while(0)
 
 #define da_insert(da, index, item) \
 	do{ \
-		(da).count++; \
+		(da)->count++; \
 		_da_capacity_grow(da); \
-		memcpy((da).items+(index)+1, (da).items+(index), sizeof(*(da).items)*((da).count-index)); \
+		memcpy((da)->items+(index)+1, (da)->items+(index), sizeof(*(da)->items)*((da)->count-index)); \
 		da_get(da, (index)) = item; \
 	} while(0)	
 
 #define da_get(da, index) \
 	(*({ \
-	   _da_error_if(index >= (da).count || (index) < 0, "index %" PRId64 " is out of the range 0..%zu\n", \
-			   ((int64_t)(index)), (da).count); \
-		(da).items + index; \
+	   _da_error_if(index >= (da)->count || (index) < 0, "index %" PRId64 " is out of the range 0..%zu\n", \
+			   ((int64_t)(index)), (da)->count); \
+		(da)->items + index; \
 	}))
 
 #define da_last(da) \
 	({ \
-		_da_error_if((da).count == 0, "da_last on empty dynamic array\n"); \
-		(da).items[(da).count - 1]; \
+		_da_error_if((da)->count == 0, "da_last on empty dynamic array\n"); \
+		(da)->items[(da)->count - 1]; \
 	})
 
 #define da_resize(da, cnt) \
 	do { \
-		(da).count = (cnt); \
+		(da)->count = (cnt); \
 		_da_capacity_grow(da); \
 		da_shrink(da); \
 	} while(0)
@@ -117,23 +117,23 @@
 #define da_unordered_remove(da, index) \
 	do { \
 		da_get(da, (index)) = da_last(da); \
-		(da).count--; \
+		(da)->count--; \
 	} while(0)
 
 #define da_ordered_remove(da, index) \
 	do { \
 		da_get(da, (index)) = da_last(da); \
-		memcpy((da).items+(index), (da).items+(index)+1, \
-				sizeof(*(da).items)*((da).count-index)); \
-		(da).count--; \
+		memcpy((da)->items+(index), (da)->items+(index)+1, \
+				sizeof(*(da)->items)*((da)->count-index)); \
+		(da)->count--; \
 	} while(0)
 
 #define da_free(da) \
 	do { \
-		if ((da).items) \
-			free((da).items); \
-		(da).count = 0; \
-		(da).capacity = 0; \
+		if ((da)->items) \
+			free((da)->items); \
+		(da)->count = 0; \
+		(da)->capacity = 0; \
 	} while(0)
 
 #endif

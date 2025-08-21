@@ -49,15 +49,15 @@ da(int) my_array = {0};
 ### Basic Operations
 
 ```c
-da_append(my_array, 42);          // Append element
-da_insert(my_array, 0, 13);       // Insert element at index
-int x = da_get(my_array, 1);      // Access element at index
-int last = da_last(my_array);     // Access the last element
+da_append(&my_array, 42);          // Append element
+da_insert(&my_array, 0, 13);       // Insert element at index
+int x = da_get(&my_array, 1);      // Access element at index
+int last = da_last(&my_array);     // Access the last element
 
-da_unordered_remove(my_array, 0); // Remove element fast (order not preserved)
-da_ordered_remove(my_array, 0);   // Remove element preserving order
+da_unordered_remove(&my_array, 0); // Remove element fast (order not preserved)
+da_ordered_remove(&my_array, 0);   // Remove element preserving order
 
-da_free(my_array);                // Release memory
+da_free(&my_array);                // Release memory
 ```
 
 ### Automatic Capacity Management

@@ -139,8 +139,7 @@
 #define da_remove_last(da) \
 	do { \
 		_da_error_if((da)->count == 0, "da_remove_last on empty dynamic array\n"); \
-		(da)->count -= 1; \
+		(da)->count--; \
 	} while (0)
-
 
 #endif

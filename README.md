@@ -19,7 +19,7 @@ Simply include the header in your project:
 #include "da.h"
 ````
 
-Optionally, define `DA_DEBUG` before including it to enable runtime checks:
+Optionally, define `DA_RUNTIME_CHECKS` before including it to enable runtime checks:
 
 ```c
 #define DA_DEBUG
@@ -54,26 +54,11 @@ da_insert(&my_array, 0, 13);       // Insert element at index
 int x = da_get(&my_array, 1);      // Access element at index
 int last = da_last(&my_array);     // Access the last element
 
-da_unordered_remove(&my_array, 0); // Remove element fast (order not preserved)
-da_ordered_remove(&my_array, 0);   // Remove element preserving order
+da_remove_ordered(&my_array, 0);   // Remove element fast (order not preserved)
+da_remove_ordered(&my_array, 0);   // Remove element preserving order
 
 da_free(&my_array);                // Release memory
 ```
-
-### Automatic Capacity Management
-
-* Array grows when full (capacity × 2)
-* Array shrinks when usage falls below 25%
-
-### Debugging
-
-Define `DA_DEBUG` to enable runtime checks such as:
-
-* Out-of-bounds access
-* Pop from empty array
-
-Error messages are printed to `stderr` and abort the program.
-For release builds, omit `DA_DEBUG` to remove these checks.
 
 ## License
 

@@ -1,4 +1,5 @@
-#define DA_DEBUG
+#define DA_RUNTIME_CHECKS
+#include <stdio.h>
 #include "da.h"
 
 typedef struct {
@@ -14,7 +15,7 @@ int main(void) {
 		da_append(&nums, i);
 	}
 	
-	da_unordered_remove(&nums, 8);
+	da_remove_unordered(&nums, 8);
 
 	for (size_t i = 0; i < nums.count; i++) {
 		printf("%i ", da_get(&nums, i));
@@ -47,10 +48,10 @@ int main(void) {
 	da_append(&sb, 'o');
 	da_append(&sb, '\0');
 
-	da_ordered_remove(&sb, 1);
+	da_remove_ordered(&sb, 1);
 	printf("sb: %s\n", sb.items);
 
-	da_ordered_remove(&sb, 8);
+	da_remove_ordered(&sb, 8);
 
 	da_free(&sb);
 	return 0;

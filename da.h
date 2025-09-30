@@ -61,7 +61,7 @@
 #endif
 
 #ifndef DA_RUNTIME_CHECKS
-#define DA_ASSERT(a) 0
+#define DA_ASSERT(a) ((void)0)
 #else
 #ifndef DA_ASSERT
 #include <assert.h>

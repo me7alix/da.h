@@ -22,7 +22,7 @@ Simply include the header in your project:
 Optionally, define `DA_RUNTIME_CHECKS` before including it to enable runtime checks:
 
 ```c
-#define DA_DEBUG
+#define DA_RUNTIME_CHECKS
 #include "da.h"
 ```
 
